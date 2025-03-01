@@ -1,10 +1,18 @@
-class InputView():
-    def read_date(self) :
+class InputView:
+
+    @classmethod
+    def read_date(cls) :
         print("12월 중 식당 예상 방문 날짜는 언제인가요?(숫자만 입력해 주세요!)")
         date = input ()
-        if not date.isdigit() :
-            raise ValueError("[ERROR] 숫자를 입력하세요요")
+
+        return date
         
-        date=int(date)
-        if date<1 or date>31 :
-            raise ValueError("[ERROR] 유효하지 않은 날짜입니다. 다시 입력해주세요")
+    @classmethod
+    def menu_ask(cls) :
+        print("주문하실 메뉴를 메뉴와 개수를 알려 주세요. (e.g. 해산물파스타-2,레드와인-1,초코케이크-1)")
+        menu = input().split(',')
+        
+        return menu
+
+
+
