@@ -1,10 +1,11 @@
 from input_view import InputView
-
+from datetime import datetime
 
 
 def int_verification(x) :
     if not x.isdigit() :
         raise ValueError("[ERROR] 숫자를 입력하세요")
+    return int(x)
     
 def date_verification(date) :
     int_verification(date)
@@ -44,9 +45,9 @@ def menu_verification(menu) :
     for i in range(len(menu)) :
         menu_list_verification(menu[i][0])
         menu_set.add(menu[i][0])
-        count+=int(menu[i][1])
-        int_verification(menu[i][1])
-        if int(menu[i][1])<1 :
+        menu[i][1]=int_verification(menu[i][1])
+        count+=menu[i][1]
+        if menu[i][1]<1 :
             raise ValueError("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
     if len(menu_set)!=len(menu) :
             raise ValueError("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
@@ -81,14 +82,61 @@ def event_available(price,menu):
         raise ValueError(123)
     
 
+def christmas_discount(day):
+    if 1 <= day <= 25 :
+        return day*100
+    if day>25 :
+        return 0
+
+
+def weekday_discount(menu):
+    discount = 0
+    for i in range (len(menu)):
+        if menu[i][0] in ["초코케이크", "아이스크림"]:
+            discount += menu[i][1] * 2023
+    return discount
+
+def weekend_discount(menu, day):
+    day_of_week = day % 7
+    if day_of_week not in {4, 5}:  # 금·토요일이 아니면 할인 없음
+        return 0
+    return sum(qty * 2023 for name, qty in menu if name in {"티본스테이크", "바비큐립", "해산물파스타", "크리스마스파스타"})
+
+
+def calculate_discount(menu, total_price, day, is_special_event):
+    day_of_week = day % 7  # 요일 계산 (임시)
+    discount = (christmas_discount(day) +
+                weekday_discount(menu, day_of_week) +
+                weekend_discount(menu, day_of_week) +
+                (1000 if is_special_event else 0))
+    champagne_bonus = 25000 if total_price >= 120000 else 0
+    return {
+        "할인 금액": discount,
+        "증정 메뉴": "샴페인" if champagne_bonus else "없음",
+        "총 혜택 금액": discount + champagne_bonus,
+        "할인 후 결제 금액": total_price - discount
+    }
+
+def menu_discount(menu, day):
+    day_of_week = day % 7  # 요일 계산 (임시)
+    discount = 0
+    discount += sum(int(qty) * 2023 for name, qty in menu if name in {"초코케이크", "아이스크림"} and day_of_week in {6, 0, 1, 2, 3})
+    discount += sum(int(qty) * 2023 for name, qty in menu if name in {"티본스테이크", "바비큐립", "해산물파스타", "크리스마스파스타"} and day_of_week in {4, 5})
+    return discount
+
+
 def main():
+    day = InputView.read_date()
+    int_verification(day)
+    day=int(day)
     menu = InputView.menu_ask()
     a=menu_verification(menu)
     price =price_count(a)
-
-    event_available(price,a)
+    discount = weekday_discount(a)
+    print(discount)
+    #event_available(price,a)
     print(price)
     print(a)
-    
+
 if __name__ == "__main__":
     main()
