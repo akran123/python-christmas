@@ -41,7 +41,6 @@ def menu_verification(menu) :
     menu_set = set()
     count=0
     menu = [item.split('-') for item in menu]
-    print(menu)
     for i in range(len(menu)) :
         menu_list_verification(menu[i][0])
         menu_set.add(menu[i][0])
@@ -68,10 +67,28 @@ def price_count(menu) :
     return price
     
 
+def event_available(price,menu):
+    drink = ["제로콜라","레드와인","샴페인"]
+    
+    if price <10000 :
+        return False
+    count = 0
+    for i in range(len(menu)) :
+        if menu[i][0] in drink :
+            count+=1
+    
+    if count ==len(menu) :
+        raise ValueError(123)
+    
+
 def main():
     menu = InputView.menu_ask()
     a=menu_verification(menu)
     price =price_count(a)
+
+    event_available(price,a)
     print(price)
+    print(a)
+    
 if __name__ == "__main__":
     main()
