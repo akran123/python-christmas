@@ -104,6 +104,12 @@ def weekend_discount(menu):
     return discount
 
 
+def special_discount(day) :
+    special_days = [3,10,17,24,25,31]
+    if day in special_days :
+        return 1000
+    
+    
 def main():
     day = InputView.read_date()
     int_verification(day)
@@ -112,6 +118,8 @@ def main():
     a=menu_verification(menu)
     price =price_count(a)
     discount = weekday_discount(a)
+    specialdiscount= special_discount(day)
+    print(specialdiscount)
     print(discount)
     #event_available(price,a)
     print(price)
